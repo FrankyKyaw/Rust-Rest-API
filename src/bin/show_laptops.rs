@@ -1,7 +1,6 @@
 use final_proj::models::*;
 use diesel::prelude::*;
 use final_proj::establish_connection;
-// use diesel_demo::*;
 
 fn main() {
     // run cargo run --bin show_laptops 

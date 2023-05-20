@@ -1,30 +1,13 @@
 #[macro_use] extern crate rocket;
 
-#[macro_use] 
 extern crate diesel;
 
-
-use diesel::connection;
 use rocket::http::Status;
-use rocket::serde::{Serialize, Deserialize};
 use rocket::serde::json::Json;
-use serde_json::to_string;
 use rocket::response::Redirect;
-use bigdecimal::BigDecimal;
 use final_proj::{create_laptop, get_laptop, delete_laptop, establish_connection, update_laptop};
-use std::str::FromStr;
-use final_proj::models::{NewLaptop, Laptop, RequestLaptop};
+use final_proj::models::{Laptop, RequestLaptop};
 
-
-// #[derive(Debug, Queryable, Serialize, Deserialize)]
-// pub struct RequestLaptop {
-//     pub brand: String,
-//     pub model: String,
-//     pub cpu: String,
-//     pub gpu: String,
-//     pub ram_gb: i32,
-//     pub price: BigDecimal,
-// }
 
 #[get("/")]
 fn hello() -> &'static str {

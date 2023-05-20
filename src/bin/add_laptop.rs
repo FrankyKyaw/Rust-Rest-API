@@ -1,5 +1,5 @@
 use diesel::prelude::*;
-use std::io::{stdin, Read};
+use std::io::{stdin};
 use final_proj::{establish_connection, create_laptop};
 use bigdecimal::BigDecimal;
 use std::str::FromStr;

@@ -1,15 +1,10 @@
-use std::{error::Error, io, process, env};
+use std::{error::Error, io, process};
 use csv;
 use diesel::prelude::*;
 use bigdecimal::BigDecimal;
 use final_proj::{establish_connection, create_laptop};
 use std::str::FromStr;
 
-struct testLaptop {
-    id: String,
-    brand: String,
-    price: String
-}
 
 fn example() -> Result<(), Box<dyn Error>> {
 
