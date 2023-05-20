@@ -6,8 +6,9 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
-use self::models::{NewLaptop, Laptop};
+use self::models::{NewLaptop, Laptop, RequestLaptop};
 use bigdecimal::BigDecimal;
+
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -20,10 +21,10 @@ pub fn establish_connection() -> PgConnection {
 
 pub fn create_laptop(conn: &mut PgConnection, brand: &str, model: &str, cpu: &str, gpu: &str, ram_gb: i32, price: BigDecimal) -> Laptop {
     use crate::schema::laptops;
-    let new_post = NewLaptop { brand, model, cpu, gpu, ram_gb, price };
+    let new_laptop = NewLaptop { brand, model, cpu, gpu, ram_gb, price };
 
     diesel::insert_into(laptops::table)
-        .values(&new_post)
+        .values(&new_laptop)
         .get_result(conn)
         .expect("Error saving new laptop")
 }
@@ -38,10 +39,24 @@ pub fn get_laptop(conn: &mut PgConnection, id_num: i32) -> Option<Laptop> {
         .expect("Error loading laptop")
 }
 
-pub fn delete_laptop(conn: &mut PgConnection, id: i32) -> QueryResult<usize> {
+pub fn delete_laptop(conn: &mut PgConnection, id_num: i32) -> QueryResult<usize> {
     use crate::schema::laptops::dsl::*;
 
-    diesel::delete(laptops.filter(id.eq(id)))
+    diesel::delete(laptops.filter(id.eq(id_num)))
         .execute(conn)
 }
 
+pub fn update_laptop(conn: &mut PgConnection, id_num: i32, laptop: &RequestLaptop) -> QueryResult<usize>{
+    use crate::schema::laptops::dsl::*;
+
+    diesel::update(laptops.filter(id.eq(id_num)))
+        .set((
+            brand.eq(&laptop.brand),
+            model.eq(&laptop.model),
+            cpu.eq(&laptop.cpu),
+            gpu.eq(&laptop.gpu),
+            ram_gb.eq(&laptop.ram_gb),
+            price.eq(&laptop.price),
+        ))
+        .execute(conn)
+}

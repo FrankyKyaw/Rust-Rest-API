@@ -26,3 +26,14 @@ pub struct Laptop {
     pub ram_gb: i32,
     pub price: BigDecimal,
 }
+
+
+#[derive(Debug, Queryable, Serialize, Deserialize)]
+pub struct RequestLaptop {
+    pub brand: String,
+    pub model: String,
+    pub cpu: String,
+    pub gpu: String,
+    pub ram_gb: i32,
+    pub price: BigDecimal,
+}
