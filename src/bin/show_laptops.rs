@@ -6,16 +6,14 @@ use final_proj::establish_connection;
 fn main() {
     use final_proj::schema::laptops::dsl::*;
 
-    let connection = &mut establish_connection();
-    let results = laptops
+    let connection: &mut PgConnection = &mut establish_connection();
+    let results: Vec<Laptop> = laptops
         .limit(5)
         .load::<Laptop>(connection)
-        .expect("Error loading posts");
+        .expect("Error loading data");
 
-    println!("Displaying {} posts", results.len());
+    println!("Displaying {} laptops", results.len());
     for laptop in results {
-        println!("{}", laptop.brand);
-        println!("-----------\n");
-        println!("{}", laptop.model);
+        println!("Brand: {}, Model: {}, CPU: {}, GPU: {}, RAM: {}, Price: {}", laptop.brand, laptop.model, laptop.cpu, laptop.gpu, laptop.ram_gb, laptop.price);
     }
 }

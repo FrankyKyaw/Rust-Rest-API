@@ -41,9 +41,3 @@ fn main() {
     let laptop = create_laptop( connection, &brand, &model, &cpu, &gpu, ram_gb, price);
     println!("\nSaved laptop {} with id {}", brand, laptop.id);
 }
-
-#[cfg(not(windows))]
-const EOF: &str = "CTRL+D";
-
-#[cfg(windows)]
-const EOF: &str = "CTRL+Z";

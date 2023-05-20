@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use bigdecimal::BigDecimal;
+use serde::{Deserialize, Serialize};
 use crate::schema::laptops;
 
 
@@ -15,7 +16,7 @@ pub struct NewLaptop<'a> {
 
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Deserialize, Serialize)]
 pub struct Laptop {
     pub id: i32,
     pub brand: String,
