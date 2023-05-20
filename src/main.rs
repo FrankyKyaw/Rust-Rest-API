@@ -4,12 +4,14 @@
 extern crate diesel;
 
 
+use diesel::connection;
+use rocket::http::Status;
 use rocket::serde::{Serialize, Deserialize};
 use rocket::serde::json::Json;
 use serde_json::to_string;
 use rocket::response::Redirect;
 use bigdecimal::BigDecimal;
-use final_proj::{create_laptop, establish_connection};
+use final_proj::{create_laptop, get_laptop, delete_laptop, establish_connection};
 use std::str::FromStr;
 use final_proj::models::{NewLaptop, Laptop};
 
@@ -36,6 +38,16 @@ fn test() -> Redirect {
     Redirect::to(uri!(hello()))
 }
 
+#[get("/laptop/<id>")]
+fn get_laptop_by_id(id: i32) -> Result<Json<Laptop>, Status> {
+    let connection = &mut establish_connection();
+    match get_laptop(connection, id) {
+        Some(laptop) => Ok(Json(laptop)),
+        None => Err(Status::NotFound)
+    }
+}
+
+
 #[post("/laptop", data="<laptop>")]
 fn create(laptop: Json<RequestLaptop>) -> Json<Laptop>{
     let connection = &mut establish_connection();
@@ -43,6 +55,14 @@ fn create(laptop: Json<RequestLaptop>) -> Json<Laptop>{
     Json(new_laptop)
 }
 
+#[delete("/laptop/<id>")]
+fn delete_laptop_by_id(id: i32) -> Result<Status, Status> {
+    let connection = &mut establish_connection();
+    match delete_laptop(connection, id) {
+        Ok(_) => Ok(Status::NoContent),  // If the delete was successful, return a 204 No Content status
+        Err(_) => Err(Status::InternalServerError), 
+    }
+}
 
 #[launch]
 fn rocket() -> _ {
@@ -50,17 +70,6 @@ fn rocket() -> _ {
         .mount("/", routes![hello])
         .mount("/test", routes![test])
         .mount("/", routes![create])
+        .mount("/", routes![get_laptop_by_id])
+        .mount("/", routes![delete_laptop_by_id])
 }
-
-// fn main() {
-//     let connection = &mut establish_connection();
-//     let brand:&str = "MSI";
-//     let model: &str = "Katana";
-//     let cpu: &str = "11350h";
-//     let gpu: &str = "3060rtx";
-//     let ram_gb: i32 = 16;
-//     let price: BigDecimal = BigDecimal::from_str("800.0").unwrap();
-
-//     let new_laptop = create_laptop(connection, brand, model, cpu, gpu, ram_gb, price);
-//     println!("Done")
-// }

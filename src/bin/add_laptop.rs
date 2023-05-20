@@ -5,6 +5,8 @@ use bigdecimal::BigDecimal;
 use std::str::FromStr;
 
 fn main() {
+    // Run cargo run --bin add_laptop 
+    // Answer the prompt with the laptop data you want to add
     let connection: &mut PgConnection = &mut establish_connection();
 
     let mut brand: String = String::new();

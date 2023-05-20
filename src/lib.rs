@@ -27,3 +27,21 @@ pub fn create_laptop(conn: &mut PgConnection, brand: &str, model: &str, cpu: &st
         .get_result(conn)
         .expect("Error saving new laptop")
 }
+
+
+pub fn get_laptop(conn: &mut PgConnection, id_num: i32) -> Option<Laptop> {
+    use crate::schema::laptops::dsl::*;
+
+    laptops.filter(id.eq(id_num))
+        .first(conn)
+        .optional()
+        .expect("Error loading laptop")
+}
+
+pub fn delete_laptop(conn: &mut PgConnection, id: i32) -> QueryResult<usize> {
+    use crate::schema::laptops::dsl::*;
+
+    diesel::delete(laptops.filter(id.eq(id)))
+        .execute(conn)
+}
+

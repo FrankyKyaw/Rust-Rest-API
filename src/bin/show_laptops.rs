@@ -4,6 +4,9 @@ use final_proj::establish_connection;
 // use diesel_demo::*;
 
 fn main() {
+    // run cargo run --bin show_laptops 
+    // to show the first 5 laptops in the database
+
     use final_proj::schema::laptops::dsl::*;
 
     let connection: &mut PgConnection = &mut establish_connection();

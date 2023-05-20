@@ -29,7 +29,7 @@ fn example() -> Result<(), Box<dyn Error>> {
         let ram_gb = ram_gb_str.parse::<i32>()?;
         let conversion_rate: BigDecimal = BigDecimal::from_str("0.012")?;
         let price_in_rupees = BigDecimal::from_str(record.get(5).unwrap_or(""))?;
-        let price_in_usd = price_in_rupees * conversion_rate;
+        let price_in_usd = price_in_rupees * conversion_rate.clone() * conversion_rate;
 
         let laptop = create_laptop( connection, &brand, &model, &cpu, &gpu, ram_gb, price_in_usd);
         println!("\nSaved laptop {} with id {}", brand, laptop.id);
