@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: franky
+      POSTGRES_PASSWORD: passwerd
+      POSTGRES_DB: final_proj
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+  app:
+    depends_on:
+      - db
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://franky:passwerd@db/final_proj
+      ROCKET_ADDRESS: 0.0.0.0
+      ROCKET_PORT: 8000
+    command: sh -c "cargo install diesel_cli --no-default-features --features postgres && diesel setup && diesel migration run && cargo run --release"

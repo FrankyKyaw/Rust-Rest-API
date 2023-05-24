@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use bigdecimal::BigDecimal;
+use rocket::FromForm;
 use serde::{Deserialize, Serialize};
 use crate::schema::laptops;
 
@@ -36,4 +37,11 @@ pub struct RequestLaptop {
     pub gpu: String,
     pub ram_gb: i32,
     pub price: BigDecimal,
+}
+
+#[derive(FromForm)]
+pub struct SearchParams {
+    pub brand: Option<String>,
+    pub min_price: Option<String>,
+    pub max_price: Option<String>
 }

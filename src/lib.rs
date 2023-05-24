@@ -1,13 +1,13 @@
 pub mod models;
 pub mod schema;
-pub mod api;
 
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
-use self::models::{NewLaptop, Laptop, RequestLaptop};
+use self::models::{NewLaptop, Laptop, RequestLaptop, SearchParams};
 use bigdecimal::BigDecimal;
+use std::str::FromStr;
 
 
 pub fn establish_connection() -> PgConnection {
@@ -37,6 +37,45 @@ pub fn get_laptop(conn: &mut PgConnection, id_num: i32) -> Option<Laptop> {
         .first(conn)
         .optional()
         .expect("Error loading laptop")
+}
+
+pub fn get_total(conn: &mut PgConnection) -> QueryResult<i64>{
+    use crate::schema::laptops::dsl::*;
+    laptops.count().get_result(conn)
+}
+
+pub fn search_laptops(conn: &mut PgConnection, params: &SearchParams) -> QueryResult<Vec<Laptop>>{
+    use crate::schema::laptops::dsl::*;
+
+    let mut query = laptops.into_boxed();
+    if let Some(ref search_brand) = params.brand {
+        query = query.filter(brand.eq(search_brand));
+    }
+
+    if let Some(ref min_price) = params.min_price {
+        
+        match BigDecimal::from_str(&min_price) {
+            Ok(min_price) => {
+                query = query.filter(price.ge(min_price));
+            }
+            Err(e) => {
+                println!("Failed to parse min_price: {}", e);
+            }
+        }
+    }
+
+    if let Some(ref max_price) = params.max_price {
+        match BigDecimal::from_str(max_price) {
+            Ok(max_price) => {
+                query = query.filter(price.le(max_price));
+            }
+            Err(e) => {
+                println!("Failed to parse max_price: {}", e);
+            }
+        }
+    }
+    query.load::<Laptop>(conn)
+
 }
 
 pub fn delete_laptop(conn: &mut PgConnection, id_num: i32) -> QueryResult<usize> {
